@@ -1,37 +1,37 @@
-package com.onebill.corejava.assignment8;
+package com.onebill.corejava.multithread;
+
+import java.util.ArrayList;
 
 class storage{
-	int product;
-	boolean bool = false;
+	ArrayList<Integer> product = new ArrayList<Integer>(10);
 	
-	public synchronized void setProduct(int product) {
-		while(bool) {
+	public synchronized void setProduct(Integer product) {
+		while(this.product.size()==10) {
 			try {
-				System.out.println("Set waiting.....");
+				System.out.println("Producer waiting.....");
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Set : " + product);
-		this.product = product;
-		bool=true;
+		this.product.add(product);
+		System.out.println("Produced : " + product);
 		notify();
 	}
 	
 	public synchronized void getProduct() {
-		while(!bool) {
+		while(this.product.isEmpty()) {
 			try {
-				System.out.println("Get waiting.....");
+				System.out.println("Consumer waiting.....");
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Get : " + this.product);
-		bool=false;
+		System.out.println("Consumed : " + this.product.remove(0));
+		
 		notify();
 	}
 
@@ -80,7 +80,7 @@ class consumer implements Runnable{
 
 }
 
-public class ProducerConsumer {
+public class ConsumerProducer {
 
 	public static void main(String[] args) {
 		storage st = new storage();
